@@ -1,0 +1,232 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ</title>
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+</head>
+
+{% if request.user.is_authenticated and request.user.test_access %}
+<style>
+    #forms {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    #forms #btn {
+        width: 200px !important;
+    }
+</style>
+<body>
+    <center style="gap: 10px; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: rgb(0,31,28);">
+        <center>
+
+<nav class="navbar px-4" data-bs-theme="dark" style="gap: 10px;">
+    <button id="modul" class="bg-primary fs-4 border border-0 rounded-pill text-white">{{ category }}</button>
+    <div class="fs-5 text-white" id="timesshow">{{user_timer}} минут 0 секунд</div>
+</nav>
+<br>
+<section>
+<div id="savollar">
+{% for t in task %}
+<div data-id="{{t.category}}" id="savol">
+    <h3 class="text-center text-white mx-2 mb-4">{{ forloop.counter }} от {{task_c}}</h3>
+    <h3 class="text-center text-white mx-2 mb-4">{{t}}</h3>
+    <div class="mx-2 d-flex justify-content-center align-items-center flex-wrap gap-2" style="gap:10px">
+        <button style="opacity: 1 !important; width: 90%; display: flex; align-items: center; padding-right: 4px; text-align: start;" data-tp="a" class="btn btn-primary btn-lg" onclick="alldiasbled(this,'{{t.togri_javob}}'); if('{{t.togri_javob}}' == 'a'){piont=1 }else{piont=0};"> <div class="rounded-pill btn py-0 px-2 text-black bg-white me-2">А</div>{{t.a}}</button>
+        <button style="opacity: 1 !important; width: 90%; display: flex; align-items: center; padding-right: 4px; text-align: start;" data-tp="b" class="btn btn-primary btn-lg" onclick="alldiasbled(this,'{{t.togri_javob}}'); if('{{t.togri_javob}}' == 'b'){piont=1 }else{piont=0};"> <div class="rounded-pill btn py-0 px-2 text-black bg-white me-2">Б</div>{{t.b}}</button>
+        <button style="opacity: 1 !important; width: 90%; display: flex; align-items: center; padding-right: 4px; text-align: start;" data-tp="c" class="btn btn-primary btn-lg" onclick="alldiasbled(this,'{{t.togri_javob}}'); if('{{t.togri_javob}}' == 'c'){piont=1 }else{piont=0};"> <div class="rounded-pill btn py-0 px-2 text-black bg-white me-2">С</div>{{t.c}}</button>
+        <button style="opacity: 1 !important; width: 90%; display: flex; align-items: center; padding-right: 4px; text-align: start;" data-tp="d" class="btn btn-primary btn-lg" onclick="alldiasbled(this,'{{t.togri_javob}}'); if('{{t.togri_javob}}' == 'd'){piont=1 }else{piont=0};"> <div class="rounded-pill btn py-0 px-2 text-black bg-white me-2">Д</div>{{t.d}}</button>
+    </div>
+</div>
+{% endfor %}
+</div>
+<div class="mx-2 d-flex justify-content-center my-3">
+    <button onclick="this.setAttribute('style','display: none !important;')" id="nextques" class="btn btn-primary fs-5 d-none">Следующий вопрос</button>
+</div>
+</section>
+
+<script>
+setTimeout(function() {
+    alert('10 у тебя осталась минута!');
+}, 50 * 60 * 1000);
+
+let vaqt = {{user_timer}}
+let h = 1
+let temes = setInterval(() => {
+    h -= 1
+    if (h == 0) {
+        h = 60
+        vaqt -= 1
+    }
+    document.getElementById('timesshow').innerHTML = `${vaqt} минута ${h} секунды`
+    if(vaqt <= 10){
+        document.getElementById('timesshow').classList.add("bg-danger")
+    }
+}, 1000);
+
+let point1 = 0
+let point2 = 0
+let noneiterator = 0
+let savolid = 1
+let piont = 0
+let s1 = 0
+let s2 = 0
+let boleanchek1 = 'False'
+let boleanchek2 = 'False'
+let otdi_otmadi1 = 'Yomon'
+let otdi_otmadi2 = 'Yomon'
+
+for (const iterator of document.getElementById('savollar').children) {
+    iterator.style.display = 'none'
+}
+document.getElementById('modul').innerHTML = `${document.getElementById('savollar').children[noneiterator].getAttribute('data-id')}`
+document.getElementById('savollar').children[noneiterator].style.display = 'block'
+
+document.getElementById('nextques').addEventListener("click",()=>{
+    for (const iterator of document.getElementById('savollar').children) {
+        iterator.style.display = 'none'
+    }
+
+    if(document.getElementById('savollar').children.length <= savolid){
+        if (document.getElementById('savollar').children[noneiterator].getAttribute('data-id') == '1-2-Modul') {
+            point1 += piont
+            s1 += 1
+        } else {
+            point2 += piont
+            s2 += 1
+        }
+        if (point1 / s1 > 0.5) {
+            boleanchek1 = 'True'
+            otdi_otmadi1 = 'Yaxshi'
+        } else {
+            boleanchek1 = 'False'
+            otdi_otmadi1 = 'Yomon'
+        }
+        if (point2 / s2 > 0.5) {
+            boleanchek2 = 'True'
+            otdi_otmadi2 = 'Yaxshi'
+        } else {
+            boleanchek2 = 'False'
+            otdi_otmadi2 = 'Yomon'
+        }
+        document.getElementById('savollar').innerHTML = `
+            <form id="forms" action="" method="POST">
+                {% csrf_token %}
+                <input hidden value="${point1}" type="text" name="natija1">
+                <input hidden value="${point2}" type="text" name="natija2">
+                <input hidden type="text" value="${boleanchek1}" name="checking1">
+                <input hidden type="text" value="${boleanchek2}" name="checking2">
+                <div class="text-white text-center mx-2 mb-4">
+                    <h5>Количество вопросов в 1-2-Modul: ${s1}<h5>
+                    <h5>Ваш счет в 1-2-Modul: ${point1}</h5>
+                    <h5>Результат в 1-2-Modul: ${Math.round((point1/s1) * 100)}%</h5>
+                    <h5>Количество вопросов в 3-Modul: ${s2}<h5>
+                    <h5>Ваш счет в 3-Modul: ${point2}</h5>
+                    <h5>Результат в 3-Modul: ${Math.round((point2/s2) * 100)}%</h5>
+                </div>
+                <input id='btn' type="submit" class="btn btn-danger" value="отправлять">
+            </form>
+        `
+        clearInterval(temes)
+    } else {
+        if (document.getElementById('savollar').children[noneiterator].getAttribute('data-id') == '1-2-Modul') {
+            point1 += piont
+            s1 += 1
+        } else {
+            point2 += piont
+            s2 += 1
+        }
+        savolid += 1
+        noneiterator += 1
+        document.getElementById('savollar').children[noneiterator].style.display = 'block'
+        document.getElementById('modul').innerHTML = `${document.getElementById('savollar').children[noneiterator].getAttribute('data-id')}`
+        if (document.getElementById('savollar').children.length < savolid + 1) {
+            document.getElementById('nextques').innerHTML = `Отправить результат`
+            document.getElementById('nextques').className = 'btn btn-danger'
+        }
+    }
+})
+
+let g = setInterval(() => {
+    if(vaqt == 0){
+        if(point1 / s1 > 0.5){
+            boleanchek1 = 'True'
+            otdi_otmadi1 = 'Yaxshi'
+        } else {
+            boleanchek1 = 'False'
+            otdi_otmadi1 = 'Yomon'
+        }
+        if(point2 / s2 > 0.5){
+            boleanchek2 = 'True'
+            otdi_otmadi2 = 'Yaxshi'
+        } else {
+            boleanchek2 = 'False'
+            otdi_otmadi2 = 'Yomon'
+        }
+        document.getElementById('savollar').innerHTML = `
+            <form id="forms" action="" method="POST">
+                {% csrf_token %}
+                <input hidden value="${point1}" type="text" name="natija1">
+                <input hidden value="${point2}" type="text" name="natija2">
+                <input hidden type="text" value="${boleanchek1}" name="checking1">
+                <input hidden type="text" value="${boleanchek2}" name="checking2">
+                <div>
+                    <h5>Ваш счет в 1-2-Modul: ${point1}</h5>
+                    <h5>Результат в 1-2-Modul: ${point1/s1 * 100}%</h5>
+                    <h5>Ваш счет в 3-Modul: ${point2}</h5>
+                    <h5>Результат в 3-Modul: ${point2/s2 * 100}%</h5>
+                </div>
+                <input id='btn' type="submit" class="btn btn-danger" value="отправлять">
+            </form>
+        `
+        clearInterval(temes)
+        clearInterval(g)
+        document.getElementById('timesshow').innerHTML = 'Время истекло'
+    }
+}, 1000);
+
+function alldiasbled(f,j){
+    document.getElementById('nextques').setAttribute('style','display: flex !important;')
+    for (const iterator of f.parentElement.children) {
+        if (iterator.getAttribute('data-tp') == f.getAttribute('data-tp')) {
+            iterator.setAttribute('class','btn btn-success btn-lg')
+        } else {
+            iterator.setAttribute('class','btn btn-primary btn-lg')
+        }
+    }
+}
+
+addEventListener("click",()=>{
+    document.getElementById('piont').innerHTML = piont
+})
+
+
+
+window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = 'Ваша работа будет потеряна, если вы покинете страницу. Вы уверены, что хотите продолжить?';
+    e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+    return confirmationMessage;          // Gecko, WebKit, Chrome <34
+});
+</script>
+
+<script src="{% static 'bootstrap.bundle.min.js' %}"></script>
+</body>
+{% elif request.user.is_authenticated %}
+
+<center class="my-5">
+    <h2>Вы сможете решить тест после разрешения администратора.</h2> <br>
+    <a href="" class="btn btn-success">Свяжитесь с нами для получения разрешения</a>
+</center>
+
+{% else %}
+<center class="my-5">
+    <h2>Пожалуйста, не стесняйтесь пройти тест</h2> <br>
+    <a href="" class="btn btn-danger">Зарегистрироваться</a>
+</center>
+{% endif %}
+</html>

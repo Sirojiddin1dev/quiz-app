@@ -1,0 +1,74 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
+    <script>
+        var randomColorGenerator = function () {
+            return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
+        };
+        var options = {
+            responsive: true,
+            maintainAspectRatio: true,
+            legend: {
+                position: 'right'
+            },
+            title: {
+                display: true
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
+            }
+        };
+        window.onload = function () {
+            var ctx = document.getElementById("gender-chart");
+            {% regroup cl.queryset|dictsort:"gender" by get_gender_display as gender_list %}
+            var lineChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for gender in gender_list %}'{{ gender.list|length }} {{ gender.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for gender in gender_list %}'{{ gender.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for gender in gender_list %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+                options: options
+            });
+
+
+            ctx = document.getElementById("country-chart");
+            {% regroup cl.queryset|dictsort:"country" by country as country_list %}
+            lineChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for c in country_list %}'{{ c.list|length }} {{ c.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for c in country_list %}'{{ c.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for country in country_list %}randomColorGenerator(),{% endfor %}]
+                    }]
+                }, options: options
+            });
+            
+           
+           
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <h1> Graphs </h1>
+    <hr>
+    <div class="col-3" style="display: flex;justify-content: right;">
+        <h5> Gender chart</h5>
+    <canvas id="gender-chart" style="width: 10px !important;"></canvas>
+   <h5> Countries chart</h5>
+            <canvas id="country-chart" style="width: 10px !important;"></canvas>
+   
+       
+            
+    </div>
+       
+    </div>
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+</head>
+<body>
+
+<center style="gap: 10px; 
+height: 652px; 
+display: flex; 
+justify-content: center; 
+align-items: center;
+background-color: white; 
+">
+
+
+    
+  {% if request.user.is_authenticated and request.user.test_access %}
+
+    <div  class="d-grid gap-2">
+      <a href="#" class="btn btn-success btn-lg">Привет {{ request.user.username }}</a>
+    <h3>Количество вопросов: {{ tasks }}</h3>
+    <h3>Время: {{ task }} минута</h3>
+    {% if request.user.test_access == 4 %}    
+      <a href="{% url 'test' categories %}" class="btn btn-primary btn-lg">Начать тест</a>
+    {% elif request.user.test_access == 1 %}
+        {% for i in categories %}
+        <a href="{% url 'test' i %}" class="btn btn-primary btn-lg">1-2-Модуль</a>
+        {% endfor %}
+    {% elif request.user.test_access == 2 %}  
+        {% for i in categories %}
+        <a href="{% url 'test' i %}" class="btn btn-primary btn-lg">3-Модуль</a>
+        {% endfor %}
+    {% endif %}    
+    </div>
+    {% elif request.user.is_authenticated %}
+
+     <div  class="d-grid gap-2">
+ <h2>Вы сможете решить тест после разрешения администратора.</h2> <br>
+        <a href="" class="btn btn-success btn-lg">Свяжитесь с нами для получения разрешения</a>
+        {% if request.user.certificate %}
+      <a href="{% url 'get_certificate' %}" class="btn btn-primary btn-lg">Скачать сертификат</a>
+      {% endif %}
+     </div>
+
+    
+    {% else %}
+    <a href="login/" class="btn btn-primary">Делистинг</a>
+    {% endif %}
+   
+
+
+    
+
+
+</center>
+<script src="/static/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

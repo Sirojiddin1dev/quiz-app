@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестовая система</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+
+</head>
+<body>
+    <center style="gap: 10px; 
+height: 652px ; 
+display: flex; 
+justify-content: center; 
+align-items: center;
+background-color: white; 
+">
+<center>
+
+<h1 class="text-start my-4" style="width: 300px; text-align: center;">Авторизоваться</h1> 
+<form class="text-start" style="width: 300px;" method="POST">
+    {% csrf_token %}
+
+    {% for x in form %}
+       <div class="text-start"> {{x.label}} <br> {{x}} 
+       </div>
+    {% endfor %}
+<br>
+    <button class="w-100 btn btn-success btn-lg my-1 text-center" type="submit">Авторизоваться</button>
+    <a class="w-100 btn btn-primary btn-lg my-1 text-center" href="{% url 'signup' %}">Чтобы создать учетную запись</a>
+</form>
+
+</center>
+<script>
+    document.getElementById('id_username').setAttribute('class','form-control ')
+    document.getElementById('id_password').setAttribute('class','form-control ')
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+
+</head>
+<body>
+    <div style="height: 652px; display: flex; justify-content: center; align-items: center; background: white;">
+        <div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <h1 class="text-dark text-center my-4">Зарегистрироваться</h1>
+            <h6 style="color: red">Введите свое имя и фамилию на русском языке</h6>
+            <form class="text-dark text-center form-control" style="width: 300px;" method="POST">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label text-start">{{ field.label }}</label>
+                        {{ field }} 
+                    </div>
+                {% endfor %}
+
+                <button class="w-100 btn btn-success btn-lg my-3" type="submit">Зарегистрироваться</button>
+                <a class="w-100 btn btn-primary btn-lg my-1" href="{% url 'login' %}">У тебя есть аккаунт?</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add further scripts or modifications as needed
+        document.getElementById('id_username').classList.add('form-control');
+        document.getElementById('id_first_name').classList.add('form-control');
+        document.getElementById('id_last_name').classList.add('form-control');
+        document.getElementById('id_country').classList.add('form-control');
+        document.getElementById('id_phone_number').classList.add('form-control');
+        document.getElementById('id_gender').classList.add('form-control');
+        document.getElementById('id_password1').classList.add('form-control');
+        document.getElementById('id_password2').classList.add('form-control');
+    </script>
+</body>
+</html>
